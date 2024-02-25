@@ -7,7 +7,7 @@
       :disabled="disabled"
       :class="ui.trigger"
       role="button"
-      @mouseover="onMouseOver"
+      @mouseenter="onMouseOver"
     >
       <slot :open="open" :close="close">
         <button :disabled="disabled">
