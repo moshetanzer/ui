@@ -1,14 +1,8 @@
 <template>
   <!-- eslint-disable-next-line vue/no-template-shadow -->
   <HPopover ref="popover" v-slot="{ open, close }" :class="ui.wrapper" v-bind="attrs" @mouseleave="onMouseLeave">
-    <HPopoverButton
-      ref="trigger"
-      as="div"
-      :disabled="disabled"
-      :class="ui.trigger"
-      role="button"
-      @mouseenter="onMouseOver"
-    >
+    <HPopoverButton ref="trigger" as="div" :disabled="disabled" :class="ui.trigger" role="button"
+      @mouseover="onMouseOver">
       <slot :open="open" :close="close">
         <button :disabled="disabled">
           Open
@@ -97,7 +91,7 @@ export default defineComponent({
     }
   },
   emits: ['update:open'],
-  setup (props, { emit }) {
+  setup(props, { emit }) {
     const { ui, attrs } = useUI('popover', toRef(props, 'ui'), config, toRef(props, 'class'))
 
     const popper = computed<PopperOptions>(() => defu(props.mode === 'hover' ? { offsetDistance: 0 } : {}, props.popper, ui.value.popper as PopperOptions))
@@ -153,7 +147,7 @@ export default defineComponent({
       }
     })
 
-    function onMouseOver () {
+    function onMouseOver() {
       if (props.mode !== 'hover' || !popoverApi.value) {
         return
       }
@@ -167,13 +161,17 @@ export default defineComponent({
       if (popoverApi.value.popoverState === 0) {
         return
       }
+      const currentState = popoverApi.value.popoverState;
       openTimeout = openTimeout || setTimeout(() => {
-        popoverApi.value.togglePopover && popoverApi.value.togglePopover()
-        openTimeout = null
-      }, props.openDelay)
+        popoverApi.value.togglePopover && popoverApi.value.togglePopover();
+        if (popoverApi.value.popoverState === currentState) {
+          popoverApi.value.popoverState = popoverApi.value.popoverState === 0 ? 1 : 0;
+        }
+        openTimeout = null;
+      }, props.openDelay);
     }
 
-    function onMouseLeave () {
+    function onMouseLeave() {
       if (props.mode !== 'hover' || !popoverApi.value) {
         return
       }
